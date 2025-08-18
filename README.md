@@ -38,7 +38,7 @@ Charlie Coin Plus 致力于成为一款 **安全可靠、低成本、高速** �
 ---
 
 ## 🔧 技术细节
-合约代码参考: [`CharlieCoinPlus.sol`](./CCP合约.txt)  
+合约代码参考: [`CharlieCoinPlus.sol`](./Charlie Coin Plus.sol)  
 
 ### 核心机制
 - **交易税系统**: 默认 1%，最高不超过 10%，自动发送至指定接收地址  

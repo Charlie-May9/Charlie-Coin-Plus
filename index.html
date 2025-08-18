@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="https://youke1.picui.cn/s1/2025/08/14/689d991deab41.jpeg" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Charlie Coin Plus</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        // 配置Tailwind自定义颜色和字体
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6C5CE7',
+                        secondary: '#00D2D3',
+                        dark: '#191923',
+                        light: '#F8F9FA',
+                        accent: '#FD79A8'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        display: ['Poppins', 'sans-serif']
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            }
+            .blur-bg {
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+            }
+            .q弹 {
+                transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            }
+            .q弹:hover {
+                transform: translateY(-5px) scale(1.02);
+            }
+            .gradient-text {
+                background-clip: text;
+                -webkit-background-clip: text;
+                color: transparent;
+            }
+            .lang-item {
+                transition: all 0.3s ease;
+                border-radius: 20px;
+            }
+            .lang-item.active {
+                background: rgba(108, 92, 231, 0.2);
+                box-shadow: 0 0 15px rgba(108, 92, 231, 0.3);
+            }
+            .lang-menu {
+                opacity: 0;
+                transform: translateY(10px);
+                visibility: hidden;
+                transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            }
+            .lang-toggle:hover .lang-menu,
+            .lang-toggle:focus-within .lang-menu {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+            .glass-effect {
+                background: rgba(25, 25, 35, 0.6);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .liquid-transition {
+                transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .footer-link {
+                @apply relative inline-block py-1 text-gray-300 hover:text-primary transition-colors;
+            }
+            .footer-link::after {
+                @apply content-[''] absolute w-0 h-0.5 bg-primary left-0 bottom-0 transition-all duration-300;
+            }
+            .footer-link:hover::after {
+                @apply w-full;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-dark to-gray-900 text-light min-h-screen overflow-x-hidden flex flex-col">
+    <!-- 背景装饰 -->
+    <div class="fixed inset-0 z-0 overflow-hidden">
+        <div class="absolute top-20 left-1/4 w-96 h-96 bg-primary/20 rounded-full filter blur-[100px] animate-pulse"></div>
+        <div class="absolute bottom-20 right-1/4 w-96 h-96 bg-secondary/20 rounded-full filter blur-[100px] animate-pulse" style="animation-delay: 1s"></div>
+        <div class="absolute top-1/2 left-1/2 w-64 h-64 bg-accent/20 rounded-full filter blur-[80px] animate-pulse" style="animation-delay: 2s"></div>
+    </div>
+
+    <!-- 导航栏 -->
+    <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 liquid-transition" id="navbar">
+        <div class="container mx-auto px-4 py-4 flex items-center justify-between blur-bg bg-dark/60 border-b border-white/10">
+            <a href="#home" class="flex items-center space-x-2 group">
+                <!-- CCP图标 -->
+                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
+                    <img src="https://youke1.picui.cn/s1/2025/08/14/689d991deab41.jpeg" alt="Charlie Coin Plus 标志" class="w-8 h-8 rounded-full">
+                </div>
+                <span class="text-xl font-display font-bold tracking-tight group-hover:text-primary transition-colors">Charlie Coin Plus</span>
+            </a>
+            
+            <!-- 桌面导航 -->
+            <nav class="hidden md:flex items-center space-x-3">
+                <a href="#home" class="nav-link relative py-2 font-medium hover:text-primary transition-colors" data-i18n="home">首页</a>
+                <a href="#about" class="nav-link relative py-2 font-medium hover:text-primary transition-colors" data-i18n="about">关于</a>
+                <a href="#features" class="nav-link relative py-2 font-medium hover:text-primary transition-colors" data-i18n="features">特点</a>
+                <a href="#trade" class="nav-link relative py-2 font-medium hover:text-primary transition-colors" data-i18n="trade">交易指南</a>
+                <a href="#creator" class="nav-link relative py-2 font-medium hover:text-primary transition-colors" data-i18n="creator">创始人</a>
+                <a href="#whitepaper" class="nav-link relative py-2 font-medium hover:text-primary transition-colors" data-i18n="whitepaper">白皮书</a>
+                
+                <!-- 语言切换按钮 -->
+                <div class="lang-toggle relative">
+                    <button class="px-3 py-2 rounded-full font-medium bg-white/5 hover:bg-white/10 transition-all flex items-center space-x-2">
+                        <i class="fa fa-globe"></i>
+                        <span id="current-lang">简体中文</span>
+                        <i class="fa fa-chevron-down text-xs"></i>
+                    </button>
+                    
+                    <div class="lang-menu absolute top-full right-0 mt-2 bg-dark/90 border border-white/10 rounded-2xl py-2 w-40 backdrop-blur-lg overflow-hidden">
+                        <button class="lang-item w-full text-left px-4 py-3 flex items-center space-x-3 hover:bg-white/10 active" data-lang="zh">
+                            <span class="flag-icon">🇨🇳</span>
+                            <span>简体中文</span>
+                        </button>
+                        <button class="lang-item w-full text-left px-4 py-3 flex items-center space-x-3 hover:bg-white/10" data-lang="en">
+                            <span class="flag-icon">🇬🇧</span>
+                            <span>English</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <a href="https://bscscan.com/token/0x1E853C470Fa3d5234D9Ba7204EE04BEA27c9eee9" target="_blank" class="bg-gradient-to-r from-primary to-secondary text-white px-6 py-2 rounded-full font-medium hover:shadow-lg hover:shadow-primary/20 transition-all q弹">
+                    <i class="fa fa-wallet mr-2"></i><span data-i18n="contract_address">合约地址</span>
+                </a>
+            </nav>
+            
+            <!-- 移动端菜单按钮 -->
+            <button class="md:hidden text-2xl" id="menu-toggle">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div class="md:hidden hidden bg-dark/95 blur-bg absolute w-full border-b border-white/10" id="mobile-menu">
+            <div class="container mx-auto px-4 py-4 flex flex-col space-y-4">
+                <a href="#home" class="py-2 font-medium hover:text-primary transition-colors" data-i18n="home">首页</a>
+                <a href="#about" class="py-2 font-medium hover:text-primary transition-colors" data-i18n="about">关于</a>
+                <a href="#features" class="py-2 font-medium hover:text-primary transition-colors" data-i18n="features">特点</a>
+                <a href="#trade" class="py-2 font-medium hover:text-primary transition-colors" data-i18n="trade">交易指南</a>
+                <a href="#creator" class="py-2 font-medium hover:text-primary transition-colors" data-i18n="creator">创始人</a>
+                <a href="#whitepaper" class="py-2 font-medium hover:text-primary transition-colors" data-i18n="whitepaper">白皮书</a>
+                
+                <!-- 移动端语言切换 -->
+                <div class="pt-2">
+                    <div class="text-sm text-gray-400 mb-2" data-i18n="language">语言/Language:</div>
+                    <div class="flex gap-3">
+                        <button class="lang-item flex-1 text-center px-4 py-2 rounded-full bg-primary/20 active" data-lang="zh">中文</button>
+                        <button class="lang-item flex-1 text-center px-4 py-2 rounded-full bg-white/5 hover:bg-white/10" data-lang="en">English</button>
+                    </div>
+                </div>
+                
+                <a href="https://bscscan.com/token/0x1E853C470Fa3d5234D9Ba7204EE04BEA27c9eee9" target="_blank" class="bg-gradient-to-r from-primary to-secondary text-white px-6 py-3 rounded-full font-medium hover:shadow-lg hover:shadow-primary/20 transition-all text-center">
+                    <i class="fa fa-wallet mr-2"></i><span data-i18n="contract_address">合约地址</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- 首页部分 -->
+        <section id="home" class="min-h-screen pt-24 pb-16 relative z-10">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-12">
+                    <div class="md:w-1/2 space-y-6">
+                        <div class="inline-block px-4 py-1 rounded-full bg-primary/10 text-primary font-medium text-sm border border-primary/20" data-i18n="tagline">
+                            币安智能链上的交易型加密货币
+                        </div>
+                        <h1 class="text-[clamp(2.5rem,5vw,4rem)] font-display font-bold leading-tight text-shadow">
+                            Charlie <span class="bg-gradient-to-r from-primary to-secondary gradient-text">Coin Plus</span>
+                        </h1>
+                        <p class="text-xl text-gray-300 max-w-lg" data-i18n="home_desc">
+                            Charlie Coin的交易升级版，以Charlie Kuo命名，运行在币安智能链上，兼具纪念意义与交易功能。
+                        </p>
+                        <div class="flex flex-wrap gap-4 pt-4">
+                            <a href="#trade" class="bg-gradient-to-r from-primary to-secondary text-white px-8 py-3 rounded-full font-medium hover:shadow-lg hover:shadow-primary/20 transition-all q弹">
+                                <i class="fa fa-exchange mr-2"></i><span data-i18n="start_trading">开始交易</span>
+                            </a>
+                            <button class="bg-transparent border border-white/20 text-white px-8 py-3 rounded-full font-medium hover:bg-white/10 transition-all q弹" id="copy-contract">
+                                <i class="fa fa-copy mr-2"></i><span data-i18n="copy_contract">复制合约地址</span>
+                            </button>
+                        </div>
+                        <div class="pt-6">
+                            <div class="text-sm text-gray-400 mb-1" data-i18n="contract_address">合约地址</div>
+                            <div class="bg-white/5 rounded-lg p-3 font-mono text-sm break-all border border-white/10">
+                                0x1E853C470Fa3d5234D9Ba7204EE04BEA27c9eee9
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2 relative">
+                        <div class="w-full max-w-md mx-auto relative">
+                            <div class="absolute inset-0 bg-gradient-to-r from-primary to-secondary rounded-full blur-3xl opacity-30 animate-pulse"></div>
+                            <div class="relative glass-effect rounded-3xl p-8 backdrop-blur-md q弹">
+                                <div class="flex justify-center mb-6">
+                                    <!-- CCP图标 -->
+                                    <div class="w-20 h-20 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
+                                        <img src="https://youke1.picui.cn/s1/2025/08/14/689d991deab41.jpeg" alt="Charlie Coin Plus 标志" class="w-16 h-16 rounded-full">
+                                    </div>
+                                </div>
+                                <h3 class="text-center text-2xl font-bold mb-2">Charlie Coin Plus</h3>
+                                <p class="text-center text-gray-400 mb-2">CCP</p>
+                                <p class="text-center text-gray-400 mb-6" data-i18n="token_type">BSC 上的交易型代币</p>
+                                
+                                <div class="space-y-4">
+                                    <div class="bg-white/5 rounded-lg p-4 border border-white/10">
+                                        <div class="text-sm text-gray-400 mb-1" data-i18n="creator">创建者</div>
+                                        <div class="font-medium">Charlie Kuo (郭权锐)</div>
+                                    </div>
+                                    <div class="bg-white/5 rounded-lg p-4 border border-white/10">
+                                        <div class="text-sm text-gray-400 mb-1" data-i18n="blockchain">区块链</div>
+                                        <div class="font-medium">币安智能链 (BSC)</div>
+                                    </div>
+                                    <div class="bg-white/5 rounded-lg p-4 border border-white/10">
+                                        <div class="text-sm text-gray-400 mb-1" data-i18n="exchange">交易平台</div>
+                                        <div class="font-medium">PancakeSwap</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 关于部分 -->
+        <section id="about" class="py-20 relative z-10">
+            <div class="container mx-auto px-4">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-[clamp(1.8rem,4vw,3rem)] font-display font-bold mb-6" data-i18n="about_title">关于 Charlie Coin Plus</h2>
+                    <p class="text-gray-300 text-lg" data-i18n="about_desc">Charlie Coin Plus (CCP) 是基于币安智能链的交易型加密货币，是Charlie Coin的升级版，由Charlie Kuo (郭权锐) 开发。</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="glass-effect rounded-2xl p-8 backdrop-blur-sm q弹">
+                        <div class="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center text-primary text-2xl mb-6">
+                            <i class="fa fa-exchange"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4" data-i18n="trading_capability">交易功能</h3>
+                        <p class="text-gray-400" data-i18n="trading_desc">作为Charlie Coin的交易版，CCP具备完整的交易功能，已在PancakeSwap上线，支持用户间的自由交易。</p>
+                    </div>
+                    
+                    <div class="glass-effect rounded-2xl p-8 backdrop-blur-sm q弹">
+                        <div class="w-14 h-14 rounded-xl bg-secondary/20 flex items-center justify-center text-secondary text-2xl mb-6">
+                            <i class="fa fa-shield"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4" data-i18n="security_upgrade">安全升级</h3>
+                        <p class="text-gray-400" data-i18n="security_desc">合约代码经过全面优化，安全性大幅提升，采用了更先进的智能合约架构，保障用户资产安全。</p>
+                    </div>
+                    
+                    <div class="glass-effect rounded-2xl p-8 backdrop-blur-sm q弹">
+                        <div class="w-14 h-14 rounded-xl bg-accent/20 flex items-center justify-center text-accent text-2xl mb-6">
+                            <i class="fa fa-link"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4" data-i18n="bsc_ecosystem">BSC 生态</h3>
+                        <p class="text-gray-400" data-i18n="bsc_desc">基于币安智能链 (BSC) 开发，Charlie Coin Plus受益于BSC生态系统的安全性和高效性，确保交易快速且低成本。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 特点部分 -->
+        <section id="features" class="py-20 relative z-10">
+            <div class="container mx-auto px-4">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-[clamp(1.8rem,4vw,3rem)] font-display font-bold mb-6" data-i18n="features_title">Charlie Coin Plus 特点</h2>
+                    <p class="text-gray-300 text-lg" data-i18n="features_desc">了解 Charlie Coin Plus 的核心特性和设计理念</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div class="space-y-8">
+                        <div class="flex gap-6">
+                            <div class="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center text-primary flex-shrink-0 q弹">
+                                <i class="fa fa-bolt"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold mb-2" data-i18n="feature1_title">高效交易</h3>
+                                <p class="text-gray-400" data-i18n="feature1_desc">基于BSC网络，交易确认速度快，手续费低，提供流畅的交易体验。</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-6">
+                            <div class="w-12 h-12 rounded-xl bg-secondary/20 flex items-center justify-center text-secondary flex-shrink-0 q弹">
+                                <i class="fa fa-lock"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold mb-2" data-i18n="feature2_title">安全升级</h3>
+                                <p class="text-gray-400" data-i18n="feature2_desc">合约经过全面安全升级，采用最新的智能合约安全标准，降低潜在风险。</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-6">
+                            <div class="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center text-accent flex-shrink-0 q弹">
+                                <i class="fa fa-shopping-cart"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold mb-2" data-i18n="feature3_title">交易所上市</h3>
+                                <p class="text-gray-400" data-i18n="feature3_desc">已在PancakeSwap去中心化交易所上市，用户可以直接进行交易买卖。</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-6">
+                            <div class="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center text-green-500 flex-shrink-0 q弹">
+                                <i class="fa fa-history"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold mb-2" data-i18n="feature4_title">传承与创新</h3>
+                                <p class="text-gray-400" data-i18n="feature4_desc">继承了Charlie Coin的纪念意义，同时增加了交易功能，实现了传承与创新的结合。</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-gradient-to-r from-primary to-secondary rounded-full blur-3xl opacity-20"></div>
+                        <div class="relative glass-effect rounded-3xl p-8 backdrop-blur-sm h-full">
+                            <h3 class="text-2xl font-bold mb-6" data-i18n="contract_info">合约信息</h3>
+                            <div class="space-y-6">
+                                <div>
+                                    <div class="text-sm text-gray-400 mb-1" data-i18n="blockchain_platform">区块链平台</div>
+                                    <div class="flex items-center gap-2 font-medium">
+                                        <img src="https://youke1.picui.cn/s1/2025/08/14/689da9c490854.png" alt="BSC 标志" class="w-6 h-6 rounded">
+                                        币安智能链 (BSC)
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="text-sm text-gray-400 mb-1" data-i18n="contract_address">合约地址</div>
+                                    <div class="bg-white/5 rounded-lg p-3 font-mono text-sm break-all border border-white/10">
+                                        0x1E853C470Fa3d5234D9Ba7204EE04BEA27c9eee9
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="text-sm text-gray-400 mb-1" data-i18n="token_symbol">代币符号</div>
+                                    <div class="font-medium">CCP</div>
+                                </div>
+                                
+                                <div>
+                                    <div class="text-sm text-gray-400 mb-1" data-i18n="token_name">代币名称</div>
+                                    <div class="font-medium">Charlie Coin Plus</div>
+                                </div>
+                                
+                                <div class="pt-4">
+                                    <a href="https://bscscan.com/token/0x1E853C470Fa3d5234D9Ba7204EE04BEA27c9eee9" target="_blank" class="inline-flex items-center gap-2 text-primary hover:underline font-medium">
+                                        <span data-i18n="view_on_bscscan">在 BscScan 上查看</span>
+                                        <i class="fa fa-external-link"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 交易指南部分 -->
+        <section id="trade" class="py-20 relative z-10 bg-gradient-to-br from-primary/5 to-secondary/5">
+            <div class="container mx-auto px-4">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-[clamp(1.8rem,4vw,3rem)] font-display font-bold mb-6" data-i18n="trade_title">在 PancakeSwap 交易 CCP</h2>
+                    <p class="text-gray-300 text-lg" data-i18n="trade_desc">Charlie Coin Plus 已在 PancakeSwap 上线，以下是交易指南</p>
+                </div>
+                
+                <div class="max-w-4xl mx-auto glass-effect rounded-3xl p-8 md:p-12 backdrop-blur-sm">
+                    <div class="flex flex-col lg:flex-row gap-10">
+                        <div class="lg:w-1/2">
+                            <div class="relative h-full">
+                                <div class="absolute inset-0 bg-gradient-to-r from-primary to-secondary rounded-full blur-3xl opacity-20"></div>
+                                <div class="relative flex flex-col h-full justify-center">
+                                    <div class="flex justify-center mb-8">
+                                        <img src="https://youke1.picui.cn/s1/2025/08/14/689d991deab41.jpeg" alt="PancakeSwap 标志" class="w-32 h-32 rounded-full object-cover border-4 border-white/10">
+                                    </div>
+                                    <a href="https://pancakeswap.finance/swap" target="_blank" class="bg-gradient-to-r from-primary to-secondary text-white px-8 py-4 rounded-full font-medium hover:shadow-lg hover:shadow-primary/20 transition-all q弹 text-center text-lg mb-4">
+                                        <i class="fa fa-exchange mr-2"></i><span data-i18n="go_to_pancake">前往 PancakeSwap</span>
+                                    </a>
+                                    <div class="bg-white/5 rounded-lg p-4 border border-white/10 text-center">
+                                        <p class="text-gray-400 text-sm mb-2" data-i18n="contract_address">合约地址</p>
+                                        <p class="font-mono text-sm break-all">0x1E853C470Fa3d5234D9Ba7204EE04BEA27c9eee9</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="lg:w-1/2 space-y-6">
+                            <h3 class="text-2xl font-bold" data-i18n="trading_steps">交易步骤</h3>
+                            <ol class="space-y-6 text-gray-300 leading-relaxed">
+                                <li class="flex gap-4">
+                                    <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold flex-shrink-0">1</div>
+                                    <div>
+                                        <p data-i18n="trade_step1">访问 PancakeSwap 并连接您的 BSC 钱包（如 MetaMask、Trust Wallet 等）。</p>
+                                    </div>
+                                </li>
+                                <li class="flex gap-4">
+                                    <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold flex-shrink-0">2</div>
+                                    <div>
+                                        <p data-i18n="trade_step2">在交易对中，点击"选择代币"，输入 CCP 合约地址：<span class="font-mono text-sm bg-white/5 px-1 rounded">0x1E853C470Fa3d5234D9Ba7204EE04BEA27c9eee9</span></p>
+                                    </div>
+                                </li>
+                                <li class="flex gap-4">
+                                    <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold flex-shrink-0">3</div>
+                                    <div>
+                                        <p data-i18n="trade_step3">确认添加 CCP 代币后，输入您想要交换的金额。</p>
+                                    </div>
+                                </li>
+                                <li class="flex gap-4">
+                                    <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold flex-shrink-0">4</div>
+                                    <div>
+                                        <p data-i18n="trade_step4">点击"交换"按钮，按照钱包提示完成交易确认。</p>
+                                    </div>
+                                </li>
+                                <li class="flex gap-4">
+                                    <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold flex-shrink-0">5</div>
+                                    <div>
+                                        <p data-i18n="trade_step5">交易完成后，您可以在钱包中查看您的 CCP 余额。</p>
+                                    </div>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 创始人部分 -->
+        <section id="creator" class="py-20 relative z-10">
+            <div class="container mx-auto px-4">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-[clamp(1.8rem,4vw,3rem)] font-display font-bold mb-6" data-i18n="creator_title">关于创始人 Charlie Kuo</h2>
+                    <p class="text-gray-300 text-lg" data-i18n="creator_intro">Charlie Coin Plus 的创造者，区块链技术爱好者与创新者</p>
+                </div>
+                
+                <div class="glass-effect rounded-3xl p-8 md:p-12 backdrop-blur-sm max-w-5xl mx-auto">
+                    <div class="flex flex-col md:flex-row items-center gap-10">
+                        <div class="md:w-1/3">
+                            <div class="relative">
+                                <div class="absolute inset-0 bg-gradient-to-r from-primary to-secondary rounded-full blur-3xl opacity-30"></div>
+                                <div class="relative w-48 h-48 md:w-64 md:h-64 mx-auto rounded-full overflow-hidden border-4 border-white/10">
+                                    <!-- Charlie Kuo照片 -->
+                                    <img src="https://youke1.picui.cn/s1/2025/08/14/689d9976139f8.jpeg" alt="Charlie Kuo 照片" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="md:w-2/3 space-y-6">
+                            <h3 class="text-2xl md:text-3xl font-bold">郭权锐 (Charlie Kuo)</h3>
+                            <p class="text-gray-300" data-i18n="creator_bio1">Charlie Kuo 是一位对区块链技术充满热情的开发者和创新者。他在加密货币领域拥有丰富的经验，专注于智能合约开发和区块链应用创新。</p>
+                            <p class="text-gray-300" data-i18n="creator_bio2">Charlie 相信区块链技术具有改变金融和数字资产领域的潜力。Charlie Coin Plus 是他技术理念的体现，结合了纪念意义与实用功能，为用户提供安全、高效的交易体验。</p>
+                            <p class="text-gray-300" data-i18n="creator_bio3">作为一名开发者，Charlie 注重代码的安全性和可靠性，Charlie Coin Plus 的合约经过多次优化和测试，确保为用户提供安全的交易环境。</p>
+                            <div class="flex gap-4 pt-2">
+                                <a href="https://x.com/PowersharpGuo" target="_blank" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-colors q弹">
+                                    <i class="fa fa-twitter"></i>
+                                </a>
+                                <a href="https://github.com/Charlie-May9" target="_blank" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-colors q弹">
+                                    <i class="fa fa-github"></i>
+                                </a>
+                                <a href="mailto:gqr20080509@gmail.com" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-colors q弹">
+                                    <i class="fa fa-envelope"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 白皮书部分 -->
+        <section id="whitepaper" class="py-20 relative z-10 bg-dark/40">
+            <div class="container mx-auto px-4">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-[clamp(1.8rem,4vw,3rem)] font-display font-bold mb-6" data-i18n="whitepaper_title">Charlie Coin Plus 白皮书</h2>
+                    <p class="text-gray-300 text-lg" data-i18n="whitepaper_desc">关于 Charlie Coin Plus 的官方技术文档</p>
+                </div>
+                
+                <div class="max-w-4xl mx-auto bg-dark/60 border border-white/10 rounded-3xl p-8 md:p-12 backdrop-blur-sm">
+                    <div class="space-y-8">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-4" data-i18n="section1_title">1. 简介</h3>
+                            <p class="text-gray-300 leading-relaxed" data-i18n="section1_desc">
+                                Charlie Coin Plus (简称 CCP) 是一款基于币安智能链 (BSC) 的交易型加密货币，是 Charlie Coin 的升级版本。本代币由 Charlie Kuo (郭权锐) 开发，旨在提供安全、高效的加密货币交易体验，并已在PancakeSwap去中心化交易所上市。
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-2xl font-bold mb-4" data-i18n="section2_title">2. 设计理念</h3>
+                            <p class="text-gray-300 leading-relaxed mb-4" data-i18n="section2_desc1">
+                                Charlie Coin Plus 设计初衷是为用户提供一款安全可靠、交易便捷的加密货币。基于对原有版本的升级优化，CCP 专注于交易场景，同时保持区块链技术的去中心化特性。
+                            </p>
+                            <p class="text-gray-300 leading-relaxed" data-i18n="section2_desc2">
+                                本代币充分利用币安智能链的技术优势，在保证安全性的前提下，提供低成本、高速度的交易体验，满足用户的日常交易需求。
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-2xl font-bold mb-4" data-i18n="section3_title">3. 核心特性</h3>
+                            <ul class="space-y-3 text-gray-300 leading-relaxed">
+                                <li class="flex items-start gap-3">
+                                    <i class="fa fa-check-circle text-primary mt-1"></i>
+                                    <span><strong data-i18n="feature1_title">高效交易</strong> - <span data-i18n="feature1_desc">基于BSC网络，交易确认速度快，手续费低，为用户提供流畅的交易体验。</span></span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i class="fa fa-check-circle text-primary mt-1"></i>
+                                    <span><strong data-i18n="feature2_title">安全可靠</strong> - <span data-i18n="feature2_desc">合约经过多重安全优化，采用行业最佳实践，保障用户资产安全。</span></span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i class="fa fa-check-circle text-primary mt-1"></i>
+                                    <span><strong data-i18n="feature3_title">交易所上市</strong> - <span data-i18n="feature3_desc">已在PancakeSwap去中心化交易所上市，支持与BNB等主流代币直接交易。</span></span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i class="fa fa-check-circle text-primary mt-1"></i>
+                                    <span><strong data-i18n="feature4_title">BSC 基础</strong> - <span data-i18n="feature4_desc">基于币安智能链 (BSC) 开发，确保交易的安全性和高效性。</span></span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-2xl font-bold mb-4" data-i18n="section4_title">4. 技术细节</h3>
+                            <p class="text-gray-300 leading-relaxed mb-4" data-i18n="section4_desc1">
+                                Charlie Coin Plus 基于币安智能链 (BSC) 开发，采用 BEP-20 代币标准，这是 BSC 生态系统中最常用的代币标准，确保了与各种钱包和应用的兼容性。
+                            </p>
+                            <p class="text-gray-300 leading-relaxed mb-4">
+                                <span data-i18n="contract_address">合约地址</span>: <span class="font-mono bg-white/5 px-2 py-1 rounded">0x1E853C470Fa3d5234D9Ba7204EE04BEA27c9eee9</span>
+                            </p>
+                            <p class="text-gray-300 leading-relaxed mb-4" data-i18n="section4_desc2">
+                                初始供应量为1,000,000枚CCP代币，全部铸造给合约部署者。合约采用OpenZeppelin的ERC20和Ownable库开发，确保代码安全性。
+                            </p>
+                            <p class="text-gray-300 leading-relaxed mb-4" data-i18n="section4_desc3">
+                                合约包含以下技术机制：
+                            </p>
+                            <ul class="space-y-3 text-gray-300 leading-relaxed pl-5 list-disc">
+                                <li data-i18n="tech_detail1">交易税系统：设置1%的交易税，税收将发送至指定接收地址</li>
+                                <li data-i18n="tech_detail2">白名单机制：合约所有者可设置免税地址，白名单地址交易无需缴纳税费</li>
+                                <li data-i18n="tech_detail3">增发限制：每次最多增发200枚代币，每月最多增发2次，防止供应过度膨胀</li>
+                                <li data-i18n="tech_detail4">权限管理：关键功能（如修改税率、管理白名单）仅限合约所有者操作</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-2xl font-bold mb-4" data-i18n="section5_title">5. 上市信息</h3>
+                            <p class="text-gray-300 leading-relaxed mb-4" data-i18n="section5_desc1">
+                                Charlie Coin Plus 已在PancakeSwap（去中心化交易所）上市交易，交易对为CCP/BNB。用户可直接通过PancakeSwap进行代币买卖。
+                            </p>
+                            <p class="text-gray-300 leading-relaxed" data-i18n="section5_desc2">
+                                PancakeSwap是币安智能链上最受欢迎的去中心化交易所之一，提供安全、便捷的代币交换服务。
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-2xl font-bold mb-4" data-i18n="section6_title">6. 免责声明</h3>
+                            <p class="text-gray-300 leading-relaxed mb-4" data-i18n="section6_desc1">
+                                Charlie Coin Plus 是一款加密货币代币，其价格可能会有较大波动。加密货币投资存在风险，用户应在充分了解风险的前提下做出投资决策。
+                            </p>
+                            <p class="text-gray-300 leading-relaxed" data-i18n="section6_desc2">
+                                本白皮书内容仅供参考，不构成任何投资建议。用户应自行研究并评估投资Charlie Coin Plus的风险。
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-12 pt-8 border-t border-white/10">
+                        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                            <div>
+                                <p class="text-gray-400" data-i18n="last_updated">最后更新：2025年8月</p>
+                            </div>
+                            <a href="https://example.com/whitepaper.pdf" target="_blank" class="bg-gradient-to-r from-primary to-secondary text-white px-6 py-3 rounded-full font-medium hover:shadow-lg hover:shadow-primary/20 transition-all q弹 flex items-center gap-2">
+                                <i class="fa fa-download"></i>
+                                <span data-i18n="download_whitepaper">下载白皮书 (PDF)</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <!-- 页脚部分 -->
+    <footer class="glass-effect border-t border-white/10 pt-12 pb-6 relative z-10">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center space-x-2 mb-6">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
+                            <img src="https://youke1.picui.cn/s1/2025/08/14/689d991deab41.jpeg" alt="Charlie Coin Plus 标志" class="w-8 h-8 rounded-full">
+                        </div>
+                        <span class="text-xl font-display font-bold">Charlie Coin Plus</span>
+                    </div>
+                    <p class="text-gray-400 mb-6" data-i18n="footer_slogan">
+                        币安智能链上的交易型加密货币
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="https://x.com/PowersharpGuo" target="_blank" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-colors q弹">
+                            <i class="fa fa-twitter"></i>
+                        </a>
+                        <a href="https://github.com/Charlie-May9" target="_blank" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-colors q弹">
+                            <i class="fa fa-github"></i>
+                        </a>
+                        <a href="mailto:gqr20080509@gmail.com" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-colors q弹">
+                            <i class="fa fa-envelope"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-6" data-i18n="quick_links">快速链接</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#home" class="footer-link" data-i18n="home">首页</a></li>
+                        <li><a href="#about" class="footer-link" data-i18n="about">关于</a></li>
+                        <li><a href="#features" class="footer-link" data-i18n="features">特点</a></li>
+                        <li><a href="#trade" class="footer-link" data-i18n="trade">交易指南</a></li>
+                        <li><a href="#creator" class="footer-link" data-i18n="creator">创始人</a></li>
+                        <li><a href="#whitepaper" class="footer-link" data-i18n="whitepaper">白皮书</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-6" data-i18n="resources">资源</h4>
+                    <ul class="space-y-3">
+                        <li><a href="https://bscscan.com/token/0x1E853C470Fa3d5234D9Ba7204EE04BEA27c9eee9" target="_blank" class="footer-link" data-i18n="bscscan">BscScan</a></li>
+                        <li><a href="https://pancakeswap.finance/swap" target="_blank" class="footer-link" data-i18n="pancakeswap">PancakeSwap</a></li>
+                        <li><a href="#" class="footer-link" data-i18n="faq">常见问题</a></li>
+                        <li><a href="#" class="footer-link" data-i18n="guides">使用指南</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-6" data-i18n="contract_address">合约地址</h4>
+                    <div class="bg-white/5 rounded-lg p-4 border border-white/10 mb-4">
+                        <p class="font-mono text-sm break-all">0x1E853C470Fa3d5234D9Ba7204EE04BEA27c9eee9</p>
+                    </div>
+                    <button class="w-full bg-primary/20 hover:bg-primary/30 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2" id="footer-copy-contract">
+                        <i class="fa fa-copy"></i>
+                        <span data-i18n="copy_contract">复制合约地址</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm mb-4 md:mb-0" data-i18n="copyright">
+                    &copy; 2025 Charlie Coin Plus. 保留所有权利。
+                </p>
+                <div class="flex gap-6">
+                    <a href="#" class="text-gray-400 hover:text-primary text-sm transition-colors" data-i18n="privacy_policy">隐私政策</a>
+                    <a href="#" class="text-gray-400 hover:text-primary text-sm transition-colors" data-i18n="terms_of_service">服务条款</a>
+                    <a href="#" class="text-gray-400 hover:text-primary text-sm transition-colors" data-i18n="disclaimer">免责声明</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+<script>
+    // 完整的国际化翻译数据（包含所有内容）
+    const translations = {
+        zh: {
+            // 原有翻译保持不变...
+            home: "首页",
+            about: "关于",
+            features: "特点",
+            trade: "交易指南",
+            creator: "创始人",
+            whitepaper: "白皮书",
+            language: "语言",
+            contract_address: "合约地址",
+            start_trading: "开始交易",
+            copy_contract: "复制合约地址",
+            tagline: "币安智能链上的交易型加密货币",
+            home_desc: "Charlie Coin的交易升级版，以Charlie Kuo命名，运行在币安智能链上，兼具纪念意义与交易功能。",
+            token_type: "BSC 上的交易型代币",
+            about_title: "关于 Charlie Coin Plus",
+            about_desc: "Charlie Coin Plus (CCP) 是基于币安智能链的交易型加密货币，是Charlie Coin的升级版，由Charlie Kuo (郭权锐) 开发。",
+            trading_capability: "交易功能",
+            trading_desc: "作为Charlie Coin的交易版，CCP具备完整的交易功能，已在PancakeSwap上线，支持用户间的自由交易。",
+            security_upgrade: "安全升级",
+            security_desc: "合约代码经过全面优化，安全性大幅提升，采用了更先进的智能合约架构，保障用户资产安全。",
+            bsc_ecosystem: "BSC 生态",
+            bsc_desc: "基于币安智能链 (BSC) 开发，Charlie Coin Plus受益于BSC生态系统的安全性和高效性，确保交易快速且低成本。",
+            features_title: "Charlie Coin Plus 特点",
+            features_desc: "了解 Charlie Coin Plus 的核心特性和设计理念",
+            feature1_title: "高效交易",
+            feature1_desc: "基于BSC网络，交易确认速度快，手续费低，提供流畅的交易体验。",
+            feature2_title: "安全升级",
+            feature2_desc: "合约经过全面安全升级，采用最新的智能合约安全标准，降低潜在风险。",
+            feature3_title: "交易所上市",
+            feature3_desc: "已在PancakeSwap去中心化交易所上市，用户可以直接进行交易买卖。",
+            feature4_title: "传承与创新",
+            feature4_desc: "继承了Charlie Coin的纪念意义，同时增加了交易功能，实现了传承与创新的结合。",
+            contract_info: "合约信息",
+            blockchain_platform: "区块链平台",
+            token_symbol: "代币符号",
+            token_name: "代币名称",
+            view_on_bscscan: "在 BscScan 上查看",
+            trade_title: "在 PancakeSwap 交易 CCP",
+            trade_desc: "Charlie Coin Plus 已在 PancakeSwap 上线，以下是交易指南",
+            go_to_pancake: "前往 PancakeSwap",
+            trading_steps: "交易步骤",
+            trade_step1: "访问 PancakeSwap 并连接您的 BSC 钱包（如 MetaMask、Trust Wallet 等）。",
+            trade_step2: "在交易对中，点击\"选择代币\"，输入 CCP 合约地址：<span class=\"font-mono text-sm bg-white/5 px-1 rounded\">0x1E853C470Fa3d5234D9Ba7204EE04BEA27c9eee9</span>",
+            trade_step3: "确认添加 CCP 代币后，输入您想要交换的金额。",
+            trade_step4: "点击\"交换\"按钮，按照钱包提示完成交易确认。",
+            trade_step5: "交易完成后，您可以在钱包中查看您的 CCP 余额。",
+            creator_title: "关于创始人 Charlie Kuo",
+            creator_intro: "Charlie Coin Plus 的创造者，区块链技术爱好者与创新者",
+            creator_bio1: "Charlie Kuo 是一位对区块链技术充满热情的开发者和创新者。他在加密货币领域拥有丰富的经验，专注于智能合约开发和区块链应用创新。",
+            creator_bio2: "Charlie 相信区块链技术具有改变金融和数字资产领域的潜力。Charlie Coin Plus 是他技术理念的体现，结合了纪念意义与实用功能，为用户提供安全、高效的交易体验。",
+            creator_bio3: "作为一名开发者，Charlie 注重代码的安全性和可靠性，Charlie Coin Plus 的合约经过多次优化和测试，确保为用户提供安全的交易环境。",
+            whitepaper_title: "Charlie Coin Plus 白皮书",
+            whitepaper_desc: "关于 Charlie Coin Plus 的官方技术文档",
+            section1_title: "1. 简介",
+            section1_desc: "Charlie Coin Plus (简称 CCP) 是一款基于币安智能链 (BSC) 的交易型加密货币，是 Charlie Coin 的升级版本。本代币由 Charlie Kuo (郭权锐) 开发，旨在提供安全、高效的加密货币交易体验，并已在PancakeSwap去中心化交易所上市。",
+            section2_title: "2. 设计理念",
+            section2_desc1: "Charlie Coin Plus 设计初衷是为用户提供一款安全可靠、交易便捷的加密货币。基于对原有版本的升级优化，CCP 专注于交易场景，同时保持区块链技术的去中心化特性。",
+            section2_desc2: "本代币充分利用币安智能链的技术优势，在保证安全性的前提下，提供低成本、高速度的交易体验，满足用户的日常交易需求。",
+            section3_title: "3. 核心特性",
+            
+            // 新增翻译内容
+            section4_title: "4. 技术细节",
+            section4_desc1: "Charlie Coin Plus 基于币安智能链 (BSC) 开发，采用 BEP-20 代币标准，这是 BSC 生态系统中最常用的代币标准，确保了与各种钱包和应用的兼容性。",
+            section4_contract: "合约地址：0x1E853C470Fa3d5234D9Ba7204EE04BEA27c9eee9",
+            section4_desc2: "初始供应量为1,000,000枚CCP代币，全部铸造给合约部署者。合约采用OpenZeppelin的ERC20和Ownable库开发，确保代码安全性。",
+            section4_mechanism: "合约包含以下技术机制：",
+            section4_mechanism1: "交易税系统：设置1%的交易税，税收将发送至指定接收地址",
+            section4_mechanism2: "白名单机制：合约所有者可设置免税地址，白名单地址交易无需缴纳税费",
+            section4_mechanism3: "增发限制：每次最多增发200枚代币，每月最多增发2次，防止供应过度膨胀",
+            section4_mechanism4: "权限管理：关键功能（如修改税率、管理白名单）仅限合约所有者操作",
+            
+            section5_title: "5. 上市信息",
+            section5_desc1: "Charlie Coin Plus 已在PancakeSwap（去中心化交易所）上市交易，交易对为CCP/BNB。用户可直接通过PancakeSwap进行代币买卖。",
+            section5_desc2: "PancakeSwap是币安智能链上最受欢迎的去中心化交易所之一，提供安全、便捷的代币交换服务。",
+            
+            section6_title: "6. 免责声明",
+            section6_desc1: "Charlie Coin Plus 是一款加密货币代币，其价格可能会有较大波动。加密货币投资存在风险，用户应在充分了解风险的前提下做出投资决策。",
+            section6_desc2: "本白皮书内容仅供参考，不构成任何投资建议。用户应自行研究并评估投资Charlie Coin Plus的风险。",
+            last_updated: "最后更新：2025年8月",
+            download_whitepaper: "下载白皮书 (PDF)",
+            logo_text: "Charlie Coin Plus 标志",
+            footer_privacy: "隐私政策",
+            footer_terms: "使用条款",
+            footer_contact: "联系我们",
+            footer_rights: "© 2023 Charlie Coin Plus. 保留所有权利。"
+        },
+        en: {
+            // 原有翻译保持不变...
+            home: "Home",
+            about: "About",
+            features: "Features",
+            trade: "Trading Guide",
+            creator: "Creator",
+            whitepaper: "Whitepaper",
+            language: "Language",
+            contract_address: "Contract Address",
+            start_trading: "Start Trading",
+            copy_contract: "Copy Contract",
+            tagline: "Trading Cryptocurrency on Binance Smart Chain",
+            home_desc: "The trading upgraded version of Charlie Coin, named after Charlie Kuo, runs on Binance Smart Chain, combining commemorative significance with trading functions.",
+            token_type: "Trading Token on BSC",
+            about_title: "About Charlie Coin Plus",
+            about_desc: "Charlie Coin Plus (CCP) is a trading cryptocurrency based on Binance Smart Chain, an upgraded version of Charlie Coin, developed by Charlie Kuo.",
+            trading_capability: "Trading Function",
+            trading_desc: "As the trading version of Charlie Coin, CCP has complete trading functions and has been launched on PancakeSwap, supporting free trading between users.",
+            security_upgrade: "Security Upgrade",
+            security_desc: "The contract code has been fully optimized with significantly improved security, adopting a more advanced smart contract architecture to protect users' assets.",
+            bsc_ecosystem: "BSC Ecosystem",
+            bsc_desc: "Developed based on Binance Smart Chain (BSC), Charlie Coin Plus benefits from the security and efficiency of the BSC ecosystem, ensuring fast and low-cost transactions.",
+            features_title: "Charlie Coin Plus Features",
+            features_desc: "Understand the core features and design concepts of Charlie Coin Plus",
+            feature1_title: "Efficient Trading",
+            feature1_desc: "Based on BSC network, with fast transaction confirmation and low fees, providing a smooth trading experience.",
+            feature2_title: "Security Upgrade",
+            feature2_desc: "The contract has undergone comprehensive security upgrades, adopting the latest smart contract security standards to reduce potential risks.",
+            feature3_title: "Listed on Exchanges",
+            feature3_desc: "Listed on PancakeSwap decentralized exchange, allowing users to trade directly.",
+            feature4_title: "Inheritance and Innovation",
+            feature4_desc: "Inherits the commemorative significance of Charlie Coin while adding trading functions, achieving a combination of inheritance and innovation.",
+            contract_info: "Contract Information",
+            blockchain_platform: "Blockchain Platform",
+            token_symbol: "Token Symbol",
+            token_name: "Token Name",
+            view_on_bscscan: "View on BscScan",
+            trade_title: "Trade CCP on PancakeSwap",
+            trade_desc: "Charlie Coin Plus is listed on PancakeSwap. Here's the trading guide",
+            go_to_pancake: "Go to PancakeSwap",
+            trading_steps: "Trading Steps",
+            trade_step1: "Visit PancakeSwap and connect your BSC wallet (such as MetaMask, Trust Wallet, etc.).",
+            trade_step2: "In the trading pair, click \"Select a token\" and enter the CCP contract address: <span class=\"font-mono text-sm bg-white/5 px-1 rounded\">0x1E853C470Fa3d5234D9Ba7204EE04BEA27c9eee9</span>",
+            trade_step3: "After confirming the addition of CCP token, enter the amount you want to exchange.",
+            trade_step4: "Click the \"Swap\" button and follow the wallet prompts to complete the transaction confirmation.",
+            trade_step5: "After the transaction is completed, you can check your CCP balance in your wallet.",
+            creator_title: "About Founder Charlie Kuo",
+            creator_intro: "The creator of Charlie Coin Plus, a blockchain technology enthusiast and innovator",
+            creator_bio1: "Charlie Kuo is a developer and innovator passionate about blockchain technology. He has rich experience in the cryptocurrency field, focusing on smart contract development and blockchain application innovation.",
+            creator_bio2: "Charlie believes that blockchain technology has the potential to transform the financial and digital asset sectors. Charlie Coin Plus embodies his technical philosophy, combining commemorative significance with practical functions to provide users with a safe and efficient trading experience.",
+            creator_bio3: "As a developer, Charlie attaches great importance to code security and reliability. The Charlie Coin Plus contract has undergone multiple optimizations and tests to ensure a secure trading environment for users.",
+            whitepaper_title: "Charlie Coin Plus Whitepaper",
+            whitepaper_desc: "Official technical documentation about Charlie Coin Plus",
+            section1_title: "1. Introduction",
+            section1_desc: "Charlie Coin Plus (CCP for short) is a trading cryptocurrency based on Binance Smart Chain (BSC), an upgraded version of Charlie Coin. This token was developed by Charlie Kuo and aims to provide a safe and efficient cryptocurrency trading experience. It has been listed on the PancakeSwap decentralized exchange.",
+            section2_title: "2. Design Concept",
+            section2_desc1: "Charlie Coin Plus was designed to provide users with a secure, reliable, and convenient cryptocurrency for trading. Based on the upgrade and optimization of the original version, CCP focuses on trading scenarios while maintaining the decentralized nature of blockchain technology.",
+            section2_desc2: "This token fully utilizes the technical advantages of Binance Smart Chain to provide low-cost, high-speed trading experience while ensuring security, meeting users' daily trading needs.",
+            section3_title: "3. Core Features",
+            
+            // 新增翻译内容
+            section4_title: "4. Technical Details",
+            section4_desc1: "Charlie Coin Plus is developed based on Binance Smart Chain (BSC) and adopts the BEP-20 token standard, the most commonly used token standard in the BSC ecosystem, ensuring compatibility with various wallets and applications.",
+            section4_contract: "Contract Address: 0x1E853C470Fa3d5234D9Ba7204EE04BEA27c9eee9",
+            section4_desc2: "The initial supply is 1,000,000 CCP tokens, all minted to the contract deployer. The contract is developed using OpenZeppelin's ERC20 and Ownable libraries to ensure code security.",
+            section4_mechanism: "The contract includes the following technical mechanisms:",
+            section4_mechanism1: "Transaction tax system: A 1% transaction tax is set, and the tax will be sent to a designated receiving address",
+            section4_mechanism2: "Whitelist mechanism: The contract owner can set tax-exempt addresses, and whitelisted addresses are not required to pay taxes for transactions",
+            section4_mechanism3: "Issuance limit: A maximum of 200 tokens can be issued each time, and a maximum of 2 issuances per month to prevent excessive supply inflation",
+            section4_mechanism4: "Permission management: Key functions (such as modifying tax rates, managing whitelists) are restricted to the contract owner",
+            
+            section5_title: "5. Listing Information",
+            section5_desc1: "Charlie Coin Plus has been listed for trading on PancakeSwap (decentralized exchange) with the trading pair CCP/BNB. Users can directly buy and sell tokens through PancakeSwap.",
+            section5_desc2: "PancakeSwap is one of the most popular decentralized exchanges on Binance Smart Chain, providing secure and convenient token exchange services.",
+            
+            section6_title: "6. Disclaimer",
+            section6_desc1: "Charlie Coin Plus is a cryptocurrency token, and its price may fluctuate significantly. Cryptocurrency investment involves risks, and users should make investment decisions on the premise of fully understanding the risks.",
+            section6_desc2: "The content of this whitepaper is for reference only and does not constitute any investment advice. Users should conduct their own research and evaluate the risks of investing in Charlie Coin Plus.",
+            last_updated: "Last updated: August 2025",
+            download_whitepaper: "Download Whitepaper (PDF)",
+            logo_text: "Charlie Coin Plus Logo",
+            footer_privacy: "Privacy Policy",
+            footer_terms: "Terms of Use",
+            footer_contact: "Contact Us",
+            footer_rights: "© 2023 Charlie Coin Plus. All rights reserved."
+        }
+    };
+
+    // 语言切换功能实现（保持不变）
+    document.addEventListener('DOMContentLoaded', function() {
+        let currentLang = 'zh';
+        const langButtons = document.querySelectorAll('.lang-item');
+        const currentLangEl = document.getElementById('current-lang');
+        
+        langButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const lang = this.getAttribute('data-lang');
+                if (lang && lang !== currentLang) {
+                    currentLang = lang;
+                    updateLanguage(lang);
+                    langButtons.forEach(btn => btn.classList.remove('active'));
+                    document.querySelectorAll(`.lang-item[data-lang="${lang}"]`).forEach(btn => btn.classList.add('active'));
+                    if (currentLangEl) {
+                        currentLangEl.textContent = lang === 'zh' ? '简体中文' : 'English';
+                    }
+                }
+            });
+        });
+        
+        const copyBtn = document.getElementById('copy-contract');
+        if (copyBtn) {
+            copyBtn.addEventListener('click', function() {
+                const contractAddress = '0x1E853C470Fa3d5234D9Ba7204EE04BEA27c9eee9';
+                navigator.clipboard.writeText(contractAddress).then(() => {
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="fa fa-check mr-2"></i>' + (currentLang === 'zh' ? '已复制' : 'Copied');
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                    }, 2000);
+                });
+            });
+        }
+        
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (menuToggle && mobileMenu) {
+            menuToggle.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+                const icon = this.querySelector('i');
+                if (mobileMenu.classList.contains('hidden')) {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                } else {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                }
+            });
+        }
+        
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', function() {
+            if (navbar) {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('py-2');
+                    navbar.classList.remove('py-4');
+                    navbar.classList.add('bg-dark/80');
+                } else {
+                    navbar.classList.add('py-4');
+                    navbar.classList.remove('py-2');
+                    navbar.classList.remove('bg-dark/80');
+                }
+            }
+        });
+        
+        function updateLanguage(lang) {
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    element.innerHTML = translations[lang][key];
+                }
+            });
+        }
+    });
+</script>

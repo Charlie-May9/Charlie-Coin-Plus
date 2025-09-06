@@ -1,7 +1,7 @@
 # Charlie Coin Plus (CCP)
 
 <p align="center">
-  <img src="https://youke1.picui.cn/s1/2025/08/14/689d991deab41.jpeg" alt="Charlie Coin Plus Logo" width="450" height="450"/>
+  <img src="https://i.czl.net/b2/img/2025/09/68bc2ff2eb42f.jpeg" alt="Charlie Coin Plus Logo" width="450" height="450"/>
 </p>
 
 **Charlie Coin Plus (CCP)** 是一款基于 **币安智能链 (BSC)** 的交易型加密货币，  

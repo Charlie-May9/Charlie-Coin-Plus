@@ -88,6 +88,68 @@
             .footer-link:hover::after {
                 @apply w-full;
             }
+            /* AI助手相关样式 */
+            .ai-helper-btn {
+                @apply fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-white shadow-lg shadow-primary/30 cursor-pointer z-50 transition-all duration-300 hover:scale-110 active:scale-95;
+            }
+            .ai-modal {
+                @apply fixed bottom-6 right-6 w-full max-w-md h-[80vh] max-h-[600px] glass-effect rounded-2xl shadow-2xl shadow-primary/20 z-50 overflow-hidden transition-all duration-300 transform translate-y-full opacity-0;
+                display: flex;
+                flex-direction: column;
+            }
+            .ai-modal.active {
+                @apply translate-y-0 opacity-100;
+            }
+            .ai-modal.minimized {
+                @apply h-14 w-14 rounded-full p-0;
+            }
+            .ai-header {
+                @apply bg-dark/40 border-b border-white/10 p-4 flex justify-between items-center;
+            }
+            .ai-chat-container {
+                @apply flex-1 overflow-y-auto p-4 space-y-4;
+            }
+            .ai-input-container {
+                @apply border-t border-white/10 p-3;
+            }
+            .message-appear {
+                animation: fadeIn 0.3s ease-out forwards;
+            }
+            .btn-bounce {
+                transition: transform 0.1s ease;
+            }
+            .btn-bounce:active {
+                transform: scale(0.95);
+            }
+            .input-focus {
+                transition: all 0.2s ease;
+            }
+            .input-focus:focus {
+                box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.3);
+            }
+            .image-preview {
+                max-width: 100%;
+                max-height: 200px;
+                object-fit: contain;
+            }
+            .image-remove {
+                opacity: 0;
+                transition: opacity 0.2s ease;
+            }
+            .image-container:hover .image-remove {
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -595,7 +657,7 @@
                 <div class="col-span-1 md:col-span-1">
                     <div class="flex items-center space-x-2 mb-6">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
-                            <img src="https://youke1.picui.cn/s1/2025/08/14/689d991deab41.jpeg" alt="Charlie Coin Plus 标志" class="w-8 h-8 rounded-full">
+                            <img src="https://i.czl.net/b2/img/2025/09/68bc2ff2eb42f.jpeg" alt="Charlie Coin Plus 标志" class="w-8 h-8 rounded-full">
                         </div>
                         <span class="text-xl font-display font-bold">Charlie Coin Plus</span>
                     </div>
@@ -662,11 +724,131 @@
         </div>
     </footer>
 
+    <!-- AI助手按钮 -->
+    <div class="ai-helper-btn flex items-center justify-center" id="ai-helper-btn">
+        <i class="fa fa-robot text-xl"></i>
+        <span class="font-bold text-lg ml0">AI</span>
+    </div>
+
+    <!-- AI助手弹窗 -->
+    <div class="ai-modal" id="ai-modal">
+        <!-- 头部 -->
+        <div class="ai-header">
+            <h3 class="font-semibold flex items-center">
+                <i class="fa fa-robot mr-2"></i>
+                <span>AI 助手</span>
+            </h3>
+            <div class="flex gap-2">
+                <button id="ai-toggle-btn" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 btn-bounce">
+                    <i class="fa fa-window-minimize"></i>
+                </button>
+                <button id="ai-close-btn" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 btn-bounce">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 控制栏 -->
+        <div class="bg-dark/40 border-b border-white/10 p-2 flex items-center gap-2">
+            <select id="modelSelect" class="border border-white/10 bg-dark/60 text-sm rounded px-2 py-1 input-focus">
+                <option value="deepseek-ai/DeepSeek-V3">DeepSeek V3</option>
+                <option value="Pro/deepseek-ai/DeepSeek-V3">Pro DeepSeek V3</option>
+                <option value="deepseek-ai/DeepSeek-V3.1">DeepSeek V3.1</option>
+                <option value="Pro/deepseek-ai/DeepSeek-V3.1">Pro DeepSeek V3.1</option>
+                <option value="deepseek-ai/DeepSeek-R1">DeepSeek R1</option>
+                <option value="Pro/deepseek-ai/DeepSeek-R1">Pro DeepSeek R1</option>
+                <option value="deepseek-ai/deepseek-vl2">DeepSeek VL2</option>
+                <option value="zai-org/GLM-4.5V">GLM-4.5V</option>
+                <option value="stepfun-ai/step3">StepFun Step3</option>
+                <option value="THUDM/GLM-4.1V-9B-Thinking">GLM-4.1V-9B-Thinking</option>
+                <option value="Qwen/Qwen2-VL-72B-Instruct">Qwen2-VL-72B-Instruct</option>
+                <option value="Qwen/Qwen2.5-VL-72B-Instruct">Qwen2.5-VL-72B-Instruct</option>
+            </select>
+            
+            <input type="password" id="apiKey" placeholder="API Key" value="sk-zvsivbsakvwwjgoqqvmkudsxndmgpaihdjstqlltentbprrj" class="border border-white/10 bg-dark/60 text-sm rounded px-2 py-1 flex-1 input-focus" style="display: none;">
+            
+            <button id="systemPromptBtn" class="text-sm border border-white/10 rounded px-2 py-1 hover:bg-white/10 btn-bounce">
+                <i class="fa fa-cog"></i>
+            </button>
+        </div>
+
+        <!-- 对话区域 -->
+        <div id="chat" class="ai-chat-container"></div>
+
+        <!-- 输入区域 -->
+        <div class="ai-input-container">
+            <!-- 图片上传区域 -->
+            <div class="mb-2">
+                <div id="imagePreviews" class="flex flex-wrap gap-2 mb-2"></div>
+                <div class="flex items-center gap-2">
+                    <label for="imageUpload" class="border border-white/10 hover:bg-white/10 px-2 py-1 rounded text-sm flex items-center cursor-pointer btn-bounce">
+                        <i class="fa fa-image mr-1"></i>
+                    </label>
+                    <input type="file" id="imageUpload" accept="image/*" multiple style="display: none;">
+                    
+                    <div class="flex items-center gap-1 ml-2">
+                        <span class="text-xs text-gray-400">细节:</span>
+                        <select id="imageDetail" class="border border-white/10 bg-dark/60 text-xs rounded px-1 py-0.5 input-focus">
+                            <option value="high">高</option>
+                            <option value="low">低</option>
+                            <option value="auto">自动</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 文本输入区域 -->
+            <div class="flex gap-2">
+                <input 
+                    type="text" 
+                    id="message" 
+                    placeholder="输入问题..." 
+                    onkeydown="if(event.key==='Enter'){sendMessage()}"
+                    class="border border-white/10 bg-dark/60 rounded px-2 py-2 flex-1 focus:outline-none focus:border-primary input-focus"
+                >
+                <button 
+                    onclick="sendMessage()" 
+                    class="bg-gradient-to-r from-primary to-secondary text-white px-3 py-2 rounded flex items-center justify-center btn-bounce"
+                >
+                    <i class="fa fa-paper-plane-o"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 系统提示词模态框 -->
+    <div id="systemPromptModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300">
+        <div class="glass-effect rounded-lg shadow-xl w-full max-w-lg mx-4 transform transition-transform duration-300 scale-95">
+            <div class="p-4 border-b border-white/10 flex justify-between items-center">
+                <h3 class="font-semibold text-lg">系统提示词</h3>
+                <button id="closeModalBtn" class="text-gray-400 hover:text-white btn-bounce">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="p-4">
+                <textarea 
+                    id="systemPromptInput" 
+                    rows="6" 
+                    class="w-full border border-white/10 bg-dark/60 rounded px-3 py-2 input-focus"
+                    placeholder="定义AI的行为和回答风格..."
+                ></textarea>
+            </div>
+            <div class="p-4 border-t border-white/10 flex justify-end gap-2">
+                <button id="resetPromptBtn" class="border border-white/10 text-white px-4 py-2 rounded hover:bg-white/10 btn-bounce">
+                    重置默认
+                </button>
+                <button id="savePromptBtn" class="bg-gradient-to-r from-primary to-secondary text-white px-4 py-2 rounded hover:opacity-90 btn-bounce">
+                    保存设置
+                </button>
+            </div>
+        </div>
+    </div>
+
 <script>
-    // 完整的国际化翻译数据（包含所有内容）
+    // 原网站功能代码
+    // 完整的国际化翻译数据
     const translations = {
         zh: {
-            // 原有翻译保持不变...
             home: "首页",
             about: "关于",
             features: "特点",
@@ -725,35 +907,35 @@
             section2_desc1: "Charlie Coin Plus 设计初衷是为用户提供一款安全可靠、交易便捷的加密货币。基于对原有版本的升级优化，CCP 专注于交易场景，同时保持区块链技术的去中心化特性。",
             section2_desc2: "本代币充分利用币安智能链的技术优势，在保证安全性的前提下，提供低成本、高速度的交易体验，满足用户的日常交易需求。",
             section3_title: "3. 核心特性",
-            
-            // 新增翻译内容
             section4_title: "4. 技术细节",
             section4_desc1: "Charlie Coin Plus 基于币安智能链 (BSC) 开发，采用 BEP-20 代币标准，这是 BSC 生态系统中最常用的代币标准，确保了与各种钱包和应用的兼容性。",
-            section4_contract: "合约地址：0x1E853C470Fa3d5234D9Ba7204EE04BEA27c9eee9",
             section4_desc2: "初始供应量为1,000,000枚CCP代币，全部铸造给合约部署者。合约采用OpenZeppelin的ERC20和Ownable库开发，确保代码安全性。",
-            section4_mechanism: "合约包含以下技术机制：",
-            section4_mechanism1: "交易税系统：设置1%的交易税，税收将发送至指定接收地址",
-            section4_mechanism2: "白名单机制：合约所有者可设置免税地址，白名单地址交易无需缴纳税费",
-            section4_mechanism3: "增发限制：每次最多增发200枚代币，每月最多增发2次，防止供应过度膨胀",
-            section4_mechanism4: "权限管理：关键功能（如修改税率、管理白名单）仅限合约所有者操作",
-            
+            section4_desc3: "合约包含以下技术机制：",
+            tech_detail1: "交易税系统：设置1%的交易税，税收将发送至指定接收地址",
+            tech_detail2: "白名单机制：合约所有者可设置免税地址，白名单地址交易无需缴纳税费",
+            tech_detail3: "增发限制：每次最多增发200枚代币，每月最多增发2次，防止供应过度膨胀",
+            tech_detail4: "权限管理：关键功能（如修改税率、管理白名单）仅限合约所有者操作",
             section5_title: "5. 上市信息",
             section5_desc1: "Charlie Coin Plus 已在PancakeSwap（去中心化交易所）上市交易，交易对为CCP/BNB。用户可直接通过PancakeSwap进行代币买卖。",
             section5_desc2: "PancakeSwap是币安智能链上最受欢迎的去中心化交易所之一，提供安全、便捷的代币交换服务。",
-            
             section6_title: "6. 免责声明",
             section6_desc1: "Charlie Coin Plus 是一款加密货币代币，其价格可能会有较大波动。加密货币投资存在风险，用户应在充分了解风险的前提下做出投资决策。",
             section6_desc2: "本白皮书内容仅供参考，不构成任何投资建议。用户应自行研究并评估投资Charlie Coin Plus的风险。",
             last_updated: "最后更新：2025年8月",
             download_whitepaper: "下载白皮书 (PDF)",
-            logo_text: "Charlie Coin Plus 标志",
-            footer_privacy: "隐私政策",
-            footer_terms: "使用条款",
-            footer_contact: "联系我们",
-            footer_rights: "© 2023 Charlie Coin Plus. 保留所有权利。"
+            footer_slogan: "币安智能链上的交易型加密货币",
+            quick_links: "快速链接",
+            resources: "资源",
+            bscscan: "BscScan",
+            pancakeswap: "PancakeSwap",
+            faq: "常见问题",
+            guides: "使用指南",
+            copyright: "&copy; 2025 Charlie Coin Plus. 保留所有权利。",
+            privacy_policy: "隐私政策",
+            terms_of_service: "服务条款",
+            disclaimer: "免责声明"
         },
         en: {
-            // 原有翻译保持不变...
             home: "Home",
             about: "About",
             features: "Features",
@@ -812,36 +994,37 @@
             section2_desc1: "Charlie Coin Plus was designed to provide users with a secure, reliable, and convenient cryptocurrency for trading. Based on the upgrade and optimization of the original version, CCP focuses on trading scenarios while maintaining the decentralized nature of blockchain technology.",
             section2_desc2: "This token fully utilizes the technical advantages of Binance Smart Chain to provide low-cost, high-speed trading experience while ensuring security, meeting users' daily trading needs.",
             section3_title: "3. Core Features",
-            
-            // 新增翻译内容
             section4_title: "4. Technical Details",
             section4_desc1: "Charlie Coin Plus is developed based on Binance Smart Chain (BSC) and adopts the BEP-20 token standard, the most commonly used token standard in the BSC ecosystem, ensuring compatibility with various wallets and applications.",
-            section4_contract: "Contract Address: 0x1E853C470Fa3d5234D9Ba7204EE04BEA27c9eee9",
             section4_desc2: "The initial supply is 1,000,000 CCP tokens, all minted to the contract deployer. The contract is developed using OpenZeppelin's ERC20 and Ownable libraries to ensure code security.",
-            section4_mechanism: "The contract includes the following technical mechanisms:",
-            section4_mechanism1: "Transaction tax system: A 1% transaction tax is set, and the tax will be sent to a designated receiving address",
-            section4_mechanism2: "Whitelist mechanism: The contract owner can set tax-exempt addresses, and whitelisted addresses are not required to pay taxes for transactions",
-            section4_mechanism3: "Issuance limit: A maximum of 200 tokens can be issued each time, and a maximum of 2 issuances per month to prevent excessive supply inflation",
-            section4_mechanism4: "Permission management: Key functions (such as modifying tax rates, managing whitelists) are restricted to the contract owner",
-            
+            section4_desc3: "The contract includes the following technical mechanisms:",
+            tech_detail1: "Transaction tax system: A 1% transaction tax is set, and the tax will be sent to a designated receiving address",
+            tech_detail2: "Whitelist mechanism: The contract owner can set tax-exempt addresses, and whitelisted addresses are not required to pay taxes for transactions",
+            tech_detail3: "Issuance limit: A maximum of 200 tokens can be issued each time, and a maximum of 2 issuances per month to prevent excessive supply inflation",
+            tech_detail4: "Permission management: Key functions (such as modifying tax rates, managing whitelists) are restricted to the contract owner",
             section5_title: "5. Listing Information",
             section5_desc1: "Charlie Coin Plus has been listed for trading on PancakeSwap (decentralized exchange) with the trading pair CCP/BNB. Users can directly buy and sell tokens through PancakeSwap.",
             section5_desc2: "PancakeSwap is one of the most popular decentralized exchanges on Binance Smart Chain, providing secure and convenient token exchange services.",
-            
             section6_title: "6. Disclaimer",
             section6_desc1: "Charlie Coin Plus is a cryptocurrency token, and its price may fluctuate significantly. Cryptocurrency investment involves risks, and users should make investment decisions on the premise of fully understanding the risks.",
             section6_desc2: "The content of this whitepaper is for reference only and does not constitute any investment advice. Users should conduct their own research and evaluate the risks of investing in Charlie Coin Plus.",
             last_updated: "Last updated: August 2025",
             download_whitepaper: "Download Whitepaper (PDF)",
-            logo_text: "Charlie Coin Plus Logo",
-            footer_privacy: "Privacy Policy",
-            footer_terms: "Terms of Use",
-            footer_contact: "Contact Us",
-            footer_rights: "© 2023 Charlie Coin Plus. All rights reserved."
+            footer_slogan: "Trading Cryptocurrency on Binance Smart Chain",
+            quick_links: "Quick Links",
+            resources: "Resources",
+            bscscan: "BscScan",
+            pancakeswap: "PancakeSwap",
+            faq: "FAQ",
+            guides: "Guides",
+            copyright: "&copy; 2025 Charlie Coin Plus. All rights reserved.",
+            privacy_policy: "Privacy Policy",
+            terms_of_service: "Terms of Service",
+            disclaimer: "Disclaimer"
         }
     };
 
-    // 语言切换功能实现（保持不变）
+    // 原网站功能实现
     document.addEventListener('DOMContentLoaded', function() {
         let currentLang = 'zh';
         const langButtons = document.querySelectorAll('.lang-item');
@@ -865,6 +1048,20 @@
         const copyBtn = document.getElementById('copy-contract');
         if (copyBtn) {
             copyBtn.addEventListener('click', function() {
+                const contractAddress = '0x1E853C470Fa3d5234D9Ba7204EE04BEA27c9eee9';
+                navigator.clipboard.writeText(contractAddress).then(() => {
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="fa fa-check mr-2"></i>' + (currentLang === 'zh' ? '已复制' : 'Copied');
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                    }, 2000);
+                });
+            });
+        }
+        
+        const footerCopyBtn = document.getElementById('footer-copy-contract');
+        if (footerCopyBtn) {
+            footerCopyBtn.addEventListener('click', function() {
                 const contractAddress = '0x1E853C470Fa3d5234D9Ba7204EE04BEA27c9eee9';
                 navigator.clipboard.writeText(contractAddress).then(() => {
                     const originalText = this.innerHTML;
@@ -915,8 +1112,388 @@
                 }
             });
         }
+
+        // 初始化AI助手功能
+        initAIHelper();
     });
 
+    // AI助手功能代码
+    function initAIHelper() {
+        // --- AI元素获取 ---
+        const aiBtn = document.getElementById('ai-helper-btn');
+        const aiModal = document.getElementById('ai-modal');
+        const aiCloseBtn = document.getElementById('ai-close-btn');
+        const aiToggleBtn = document.getElementById('ai-toggle-btn');
+        
+        // --- 初始化存储 ---
+        // 内置API密钥，不显示给用户
+        const apiKey = "sk-zvsivbsakvwwjgoqqvmkudsxndmgpaihdjstqlltentbprrj";
+        
+        let model = localStorage.getItem("silicon_model") || "deepseek-ai/DeepSeek-V3";
+        document.getElementById("modelSelect").value = model;
+
+        let defaultSystemPrompt = "";
+        let systemPrompt = localStorage.getItem("silicon_system_prompt") || defaultSystemPrompt;
+        document.getElementById("systemPromptInput").value = systemPrompt;
+
+        let savedConversation = localStorage.getItem("silicon_conversation");
+        let conversation = savedConversation ? JSON.parse(savedConversation) : [{ role: "system", content: systemPrompt }];
+
+        // 存储已上传的图片信息
+        let uploadedImages = [];
+
+        // --- 打字机相关 ---
+        let pendingQueue = []; // 待输出队列，每个元素是 {text, startTime}
+        let typingTimer = null;
+
+        // --- AI弹窗控制 ---
+        // 使用相同的ID处理关闭和折叠功能
+        function toggleAIModal(forceClose = false) {
+            if (forceClose) {
+                aiModal.classList.remove('active');
+                aiModal.classList.remove('minimized');
+                return;
+            }
+            
+            if (aiModal.classList.contains('minimized')) {
+                aiModal.classList.remove('minimized');
+                aiModal.classList.add('active');
+            } else if (aiModal.classList.contains('active')) {
+                aiModal.classList.remove('active');
+                aiModal.classList.add('minimized');
+            } else {
+                aiModal.classList.add('active');
+            }
+        }
+
+        aiBtn.addEventListener('click', function() {
+            toggleAIModal();
+        });
+
+        // 使用相同的处理函数处理关闭和折叠
+        aiCloseBtn.addEventListener('click', function() {
+            toggleAIModal(true);
+        });
+
+        aiToggleBtn.addEventListener('click', function() {
+            toggleAIModal();
+        });
+
+        // --- 消息格式化 ---
+        function formatTextWithNewlines(text) {
+            return text ? text.replace(/\n/g, '<br>') : '';
+        }
+
+        // --- 添加消息到对话区 ---
+        function appendMessage(role, content) {
+            const chat = document.getElementById("chat");
+            const div = document.createElement("div");
+            const isUser = role === "user";
+            div.className = `flex ${isUser ? 'justify-end' : 'justify-start'} message-appear`;
+            const bubbleClass = isUser 
+                ? 'bg-primary/20 text-white rounded-t-lg rounded-bl-lg border border-primary/30' 
+                : 'bg-white/5 text-white rounded-t-lg rounded-br-lg border border-white/10';
+            
+            // 构建消息内容
+            let contentHtml = '';
+            
+            // 如果是数组，说明包含图片和文本
+            if (Array.isArray(content)) {
+                content.forEach(item => {
+                    if (item.type === 'image_url') {
+                        // 图片元素
+                        contentHtml += `<div class="my-2 image-container relative">
+                                          <img src="${item.image_url.url}" alt="用户上传的图片" class="image-preview rounded-md border border-white/10">
+                                        </div>`;
+                    } else if (item.type === 'text' && item.text) {
+                        // 文本元素
+                        contentHtml += `<div class="${item.type === 'text' ? '' : 'text-gray-400 text-sm'}">${formatTextWithNewlines(item.text)}</div>`;
+                    }
+                });
+            } else {
+                // 纯文本内容
+                contentHtml = formatTextWithNewlines(content);
+            }
+            
+            div.innerHTML = `<div class="${bubbleClass} max-w-[75%] p-3 shadow-sm">${contentHtml}</div>`;
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+            return div.querySelector('div');
+        }
+
+        // --- 打字机效果 ---
+        function startTyping(chatBox) {
+            if (typingTimer) return;
+            typingTimer = setInterval(() => {
+                if (pendingQueue.length === 0) {
+                    clearInterval(typingTimer);
+                    typingTimer = null;
+                    return;
+                }
+                let current = pendingQueue[0];
+                // 根据内容块到达速度动态调整间隔
+                const now = Date.now();
+                const deltaT = Math.max(now - current.startTime, 2); // 至少2ms
+                let speed = Math.min(Math.max(100 - deltaT / 5, 1), 80); // 速度动态: 1~80ms/字
+                chatBox.innerHTML += formatTextWithNewlines(current.text.charAt(0));
+                current.text = current.text.slice(1);
+                if (current.text.length === 0) pendingQueue.shift();
+                chatBox.parentElement.scrollTop = chatBox.parentElement.scrollHeight;
+            }, 30);
+        }
+
+        // --- 流式获取AI响应 ---
+        async function streamAIResponse(chatBox) {
+            try {
+                const response = await fetch("https://api.siliconflow.cn/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + apiKey,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        messages: conversation,
+                        stream: true,
+                        ...(model.includes("R1") ? { show_thoughts: true } : {})
+                    })
+                });
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder("utf-8");
+                let buffer = "";
+                let fullText = "";
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    buffer += decoder.decode(value, { stream: true });
+                    const parts = buffer.split("\n\n");
+                    buffer = parts.pop();
+                    for (const part of parts) {
+                        if (part.startsWith("data:")) {
+                            const data = part.slice(5).trim();
+                            if (data === "[DONE]") {
+                                conversation.push({ role: "assistant", content: fullText });
+                                saveConversation();
+                                return;
+                            }
+                            try {
+                                const json = JSON.parse(data);
+                                const delta = json.choices[0].delta;
+                                if (delta?.content) {
+                                    fullText += delta.content;
+                                    pendingQueue.push({ text: delta.content, startTime: Date.now() });
+                                    startTyping(chatBox);
+                                }
+                                if (model.includes("R1") && delta?.thought) {
+                                    pendingQueue.push({ text: delta.thought, startTime: Date.now() });
+                                    startTyping(chatBox);
+                                }
+                            } catch(e) { console.error("解析错误:", e, part); }
+                        }
+                    }
+                }
+            } catch(err) {
+                if (typingTimer) clearInterval(typingTimer);
+                typingTimer = null;
+                chatBox.textContent = "⚠️ 出错了: " + err.message;
+            }
+        }
+
+        // --- 转换图片为base64格式 ---
+        function convertImageToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    // 从DataURL中提取base64部分
+                    const base64String = reader.result.split(',')[1];
+                    resolve(base64String);
+                };
+                reader.onerror = reject;
+                // 使用WebP格式以减小文件大小
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // --- 处理图片上传预览 ---
+        async function handleImageUpload(event) {
+            const files = event.target.files;
+            if (!files.length) return;
+            
+            const detail = document.getElementById("imageDetail").value;
+            const previewsContainer = document.getElementById("imagePreviews");
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                // 检查文件类型是否为图片
+                if (!file.type.startsWith('image/')) continue;
+                
+                try {
+                    // 转换为base64
+                    const base64String = await convertImageToBase64(file);
+                    
+                    // 创建预览元素
+                    const previewDiv = document.createElement('div');
+                    previewDiv.className = 'relative image-container';
+                    previewDiv.innerHTML = `
+                        <img src="data:${file.type};base64,${base64String}" alt="预览图" class="image-preview rounded-md border border-white/10">
+                        <button class="absolute top-1 right-1 bg-white/80 hover:bg-white text-gray-700 rounded-full w-6 h-6 flex items-center justify-center text-xs image-remove btn-bounce">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    `;
+                    previewsContainer.appendChild(previewDiv);
+                    
+                    // 存储图片信息
+                    uploadedImages.push({
+                        file: file,
+                        base64: base64String,
+                        type: file.type,
+                        detail: detail,
+                        element: previewDiv
+                    });
+                    
+                    // 添加删除事件
+                    previewDiv.querySelector('button').addEventListener('click', () => {
+                        const index = uploadedImages.findIndex(img => img.element === previewDiv);
+                        if (index !== -1) {
+                            uploadedImages.splice(index, 1);
+                        }
+                        previewDiv.remove();
+                    });
+                } catch (error) {
+                    console.error('图片处理失败:', error);
+                    alert('图片处理失败: ' + error.message);
+                }
+            }
+            
+            // 清空文件输入，允许重复选择同一文件
+            event.target.value = '';
+        }
+
+        // --- 发送消息 ---
+        window.sendMessage = function() {
+            const input = document.getElementById("message");
+            const text = input.value.trim();
+            
+            // 检查是否有内容可发送（文本或图片）
+            if (!text && uploadedImages.length === 0) return;
+            
+            // 构建用户消息内容
+            const userContent = [];
+            
+            // 添加图片
+            uploadedImages.forEach(img => {
+                userContent.push({
+                    type: "image_url",
+                    image_url: {
+                        url: `data:${img.type};base64,${img.base64}`,
+                        detail: img.detail
+                    }
+                });
+            });
+            
+            // 添加文本
+            if (text) {
+                userContent.push({
+                    type: "text",
+                    text: text
+                });
+            }
+            
+            // 显示用户消息
+            const chatBox = appendMessage("user", userContent);
+            
+            // 添加到对话历史
+            conversation.push({ 
+                role: "user", 
+                content: userContent 
+            });
+            
+            // 保存对话
+            saveConversation();
+            
+            // 清空输入和图片预览
+            input.value = "";
+            document.getElementById("imagePreviews").innerHTML = "";
+            uploadedImages = [];
+            
+            // 显示AI回复框并开始获取回复
+            const assistantBox = appendMessage("assistant", "");
+            streamAIResponse(assistantBox);
+        }
+
+        // --- 新建对话 ---
+        function newChat() {
+            if (confirm("确定要开始新的对话吗？")) {
+                document.getElementById("chat").innerHTML = "";
+                document.getElementById("imagePreviews").innerHTML = "";
+                document.getElementById("message").value = "";
+                uploadedImages = [];
+                conversation = [{ role: "system", content: systemPrompt }];
+                saveConversation();
+            }
+        }
+
+        // --- 保存对话 ---
+        function saveConversation() {
+            localStorage.setItem("silicon_conversation", JSON.stringify(conversation));
+        }
+
+        // --- 事件监听 ---
+        document.getElementById("modelSelect").addEventListener("change", (e) => {
+            model = e.target.value;
+            localStorage.setItem("silicon_model", model);
+        });
+        
+        document.getElementById("imageUpload").addEventListener("change", handleImageUpload);
+
+        // --- 系统提示词模态框 ---
+        const modal = document.getElementById("systemPromptModal");
+        const modalContent = modal.querySelector('div');
+        document.getElementById("systemPromptBtn").addEventListener("click", () => {
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.add('opacity-100');
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        });
+        
+        document.getElementById("closeModalBtn").addEventListener("click", () => {
+            modal.classList.remove('opacity-100');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        });
+        
+        modal.addEventListener("click", (e) => { 
+            if (e.target === modal) {
+                modal.classList.remove('opacity-100');
+                modalContent.classList.remove('scale-100');
+                modalContent.classList.add('scale-95');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            }
+        });
+        
+        document.getElementById("savePromptBtn").addEventListener("click", () => {
+            const newPrompt = document.getElementById("systemPromptInput").value.trim() || defaultSystemPrompt;
+            systemPrompt = newPrompt;
+            localStorage.setItem("silicon_system_prompt", systemPrompt);
+            const sysIdx = conversation.findIndex(m => m.role === "system");
+            if (sysIdx !== -1) conversation[sysIdx].content = systemPrompt;
+            else conversation.unshift({ role:"system", content: systemPrompt });
+            saveConversation();
+            
+            modal.classList.remove('opacity-100');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        });
+        
+        document.getElementById("resetPromptBtn").addEventListener("click", () => {
+            document.getElementById("systemPromptInput").value = defaultSystemPrompt;
+        });
+    }
 </script>
 
-
+</body>
+</html>
